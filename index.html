@@ -256,65 +256,6 @@
             color: #856404;
         }
 
-        .update-token-btn {
-            background: #667eea;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 0.9em;
-            transition: background 0.3s;
-        }
-
-        .update-token-btn:hover {
-            background: #5568d3;
-        }
-
-        .token-input-area {
-            display: none;
-            margin-top: 15px;
-        }
-
-        .token-input-area.active {
-            display: block;
-        }
-
-        .token-input {
-            width: 100%;
-            padding: 10px;
-            border: 2px solid #ddd;
-            border-radius: 6px;
-            font-family: monospace;
-            font-size: 0.85em;
-            margin-bottom: 10px;
-        }
-
-        .token-instructions {
-            background: #f8f9fa;
-            padding: 15px;
-            border-radius: 6px;
-            font-size: 0.85em;
-            color: #666;
-            margin-bottom: 10px;
-        }
-
-        .token-instructions ol {
-            margin-left: 20px;
-            margin-top: 10px;
-        }
-
-        .token-instructions li {
-            margin: 5px 0;
-        }
-
-        .token-instructions code {
-            background: #e9ecef;
-            padding: 2px 6px;
-            border-radius: 3px;
-            font-size: 0.9em;
-        }
-
         @media (max-width: 768px) {
             .records-grid {
                 grid-template-columns: 1fr;
@@ -340,28 +281,6 @@
                 <div class="token-info">
                     <span style="font-weight: bold;">🔑 Token Status:</span>
                     <span id="tokenExpiry" class="token-expiry">Checking...</span>
-                </div>
-                <button id="updateTokenBtn" class="update-token-btn">Update Token</button>
-            </div>
-            <div id="tokenInputArea" class="token-input-area">
-                <div class="token-instructions">
-                    <strong>📋 How to get a fresh JWT token:</strong>
-                    <ol>
-                        <li>Open <strong>ryne.ai</strong> in a new tab and log in</li>
-                        <li>Press <strong>F12</strong> to open Developer Tools</li>
-                        <li>Go to the <strong>Network</strong> tab</li>
-                        <li>Refresh the page or navigate around</li>
-                        <li>Look for a request to: <code>rest/v1/users</code></li>
-                        <li>Click on it, go to <strong>Headers</strong> section</li>
-                        <li>Find <strong>Authorization</strong> in Request Headers</li>
-                        <li>Copy the entire value (starts with "Bearer eyJ...")</li>
-                        <li>Paste it below and click Save</li>
-                    </ol>
-                </div>
-                <input type="text" id="tokenInput" class="token-input" placeholder="Paste Bearer token here...">
-                <div style="display: flex; gap: 10px;">
-                    <button onclick="saveToken()" class="update-token-btn">Save Token</button>
-                    <button onclick="cancelTokenUpdate()" class="update-token-btn" style="background: #6c757d;">Cancel</button>
                 </div>
             </div>
         </div>
@@ -427,53 +346,6 @@
                 expiryElement.className = 'token-expiry token-valid';
             }
         }
-
-        // Token management functions
-        function showTokenInput() {
-            document.getElementById('tokenInputArea').classList.add('active');
-        }
-
-        function cancelTokenUpdate() {
-            document.getElementById('tokenInputArea').classList.remove('active');
-            document.getElementById('tokenInput').value = '';
-        }
-
-        function saveToken() {
-            const newToken = document.getElementById('tokenInput').value.trim();
-            
-            if (!newToken) {
-                alert('Please enter a token');
-                return;
-            }
-
-            // Validate token format
-            if (!newToken.startsWith('Bearer ')) {
-                alert('Token should start with "Bearer "');
-                return;
-            }
-
-            // Try to parse and validate
-            const payload = parseJWT(newToken);
-            if (!payload) {
-                alert('Invalid token format');
-                return;
-            }
-
-            // Save token
-            currentAuthToken = newToken;
-            localStorage.setItem('ryneai_token', newToken);
-            
-            // Update UI
-            checkTokenExpiry();
-            cancelTokenUpdate();
-            
-            // Refresh data with new token
-            fetchData();
-            
-            alert('✅ Token updated successfully!');
-        }
-
-        document.getElementById('updateTokenBtn').addEventListener('click', showTokenInput);
 
         // Check token expiry periodically
         function checkAndNotifyExpiry() {
